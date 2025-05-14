@@ -1,0 +1,72 @@
+import random
+
+import numpy as np
+
+import pandas as pd
+
+import matplotlib.pyplot as plt
+
+from sklearn.linear_model import LinearRegression
+
+from sklearn.model_selection import train_test_split
+
+np.random.seed(42)
+
+days = np.arange(1, 101)
+
+energy_usage = 100 + days * 0.6 + np.random.normal(0, 5, 100)
+
+df = pd.DataFrame({'Day': days, 'Energy_Consumption': energy_usage})
+
+X = df[['Day']]
+
+y = df['Energy_Consumption']
+
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+model = LinearRegression()
+
+model.fit(X_train, y_train)
+
+forecast = model.predict(X_test)
+
+iot_time = np.arange(1, 61)  # 60 seconds
+
+voltage_data = [220 + random.uniform(-3, 3) for _ in iot_time]
+
+fig, axs = plt.subplots(2, 1, figsize=(10, 8))
+
+axs[0].plot(df['Day'], df['Energy_Consumption'], label='Actual Usage')
+
+axs[0].plot(X_test, forecast, 'ro', label='Forecasted')
+
+axs[0].set_title('Energy Forecasting')
+
+axs[0].set_xlabel('Day')
+
+axs[0].set_ylabel('Energy (kWh)')
+
+axs[0].legend()
+
+axs[0].grid(True)
+
+axs[1].plot(iot_time, voltage_data, label='Voltage (V)', color='green')
+
+axs[1].set_title('Real-Time IoT Voltage Monitoring')
+
+axs[1].set_xlabel('Time (s)')
+
+axs[1].set_ylabel('Voltage (V)')
+
+axs[1].set_ylim(215, 225)
+
+axs[1].legend()
+
+axs[1].grid(True)
+
+plt.tight_layout()
+
+plt.savefig("phase4_output_simulation.png")
+
+plt.show()
+
